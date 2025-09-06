@@ -1,249 +1,165 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!doctype html>
+<html lang="pt-br">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Plataforma Revalida</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f4f6f9;
-      color: #333;
-    }
-    header {
-      background: #4e73df;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-    .container {
-      display: flex;
-      height: 100vh;
-    }
-    /* Área lateral */
-    nav {
-      width: 220px;
-      background: #2e59d9;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      padding: 20px;
-    }
-    nav a {
-      color: white;
-      text-decoration: none;
-      margin: 10px 0;
-      padding: 8px;
-      border-radius: 6px;
-      transition: 0.3s;
-    }
-    nav a:hover {
-      background: #224abe;
-    }
-    /* Conteúdo */
-    main {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-    }
-    /* Área de login/cadastro */
-    .auth-container {
-      max-width: 400px;
-      margin: 50px auto;
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
-    .auth-container h2 {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    .auth-container input {
-      width: 100%;
-      padding: 10px;
-      margin: 8px 0;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-    }
-    .auth-container button {
-      width: 100%;
-      padding: 12px;
-      background: #4e73df;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    .auth-container button:hover {
-      background: #224abe;
-    }
-    .hidden {
-      display: none;
-    }
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plataforma Revalida</title>
+<style>
+  body { font-family:sans-serif; background:#f0f4f8; margin:0; }
+  .login-card { background:#ffffff; padding:28px; border-radius:16px; width:360px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin:50px auto; }
+  h1 { margin-top:0; text-align:center; color:#1f2937; }
+  input { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; }
+  button { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; background:#6366f1; color:#fff; cursor:pointer; }
+  button:hover { background:#4f46e5; }
+  .switch { color:#4b5563; cursor:pointer; text-decoration:underline; text-align:center; margin-top:8px; }
+  .message { text-align:center; margin-top:8px; font-size:0.9rem; color:#ef4444; }
+  .hidden { display:none; }
+
+  /* Painel */
+  .panel { display:none; padding:20px; max-width:900px; margin:50px auto; background:#ffffff; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
+  .nav { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
+  .nav button { flex:1; background:#e0e7ff; color:#1f2937; font-weight:bold; }
+  .nav button.active { background:#6366f1; color:#fff; }
+  .content input[type="text"] { border:1px solid #ccc; padding:8px; border-radius:6px; margin-bottom:12px; width:100%; }
+</style>
 </head>
 <body>
-  <header>
-    <h1>Plataforma Revalida</h1>
-  </header>
 
-  <!-- LOGIN E CADASTRO -->
-  <div id="auth-section" class="auth-container">
-    <h2 id="auth-title">Login</h2>
+<!-- Login/Cadastro -->
+<div class="login-card" id="loginCard">
+  <h1 id="formTitle">Login</h1>
+  <form id="authForm">
+    <input type="text" id="name" placeholder="Nome completo" class="extra hidden">
+    <input type="number" id="age" placeholder="Idade" class="extra hidden">
     <input type="email" id="email" placeholder="E-mail" required>
-    <input type="password" id="password" placeholder="Senha" required>
-    
-    <div id="extra-fields" class="hidden">
-      <input type="text" id="name" placeholder="Nome completo">
-      <input type="number" id="age" placeholder="Idade">
+    <input type="password" id="password" placeholder="Senha" required minlength="6">
+    <button type="submit" id="submitBtn">Entrar</button>
+  </form>
+  <div class="switch" id="toggleForm">Não tem conta? Cadastre-se</div>
+  <div class="message" id="message"></div>
+  <div class="message hidden" id="logoutSection">
+    <button id="logoutBtn">Sair</button>
+  </div>
+</div>
+
+<!-- Painel -->
+<div class="panel" id="panel">
+  <div class="nav" id="panelNav">
+    <button class="active" onclick="showSection('home')">Página Inicial</button>
+    <button onclick="showSection('profile')">Perfil</button>
+    <button onclick="showSection('material')">Material de Estudo</button>
+    <button onclick="showSection('courses')">Cursos</button>
+    <button onclick="showSection('simulados')">Simulados</button>
+    <button onclick="showSection('flashcards')">Flashcards</button>
+    <button onclick="showSection('library')">Biblioteca</button>
+    <button onclick="showSection('contact')">Fale Conosco</button>
+  </div>
+  <div class="content" id="content">
+    <input type="text" id="siteSearch" placeholder="Pesquisar..." oninput="searchSite()">
+    <div id="sectionContent">
+      <h2>Página Inicial</h2>
+      <p>Bem-vindo ao seu painel de controle.</p>
     </div>
-
-    <button id="login-btn">Entrar</button>
-    <button id="signup-btn">Cadastrar</button>
-
-    <p id="toggle-auth" style="text-align:center; margin-top:10px; cursor:pointer; color:#4e73df;">
-      Criar conta
-    </p>
   </div>
+</div>
 
-  <!-- PAINEL PÓS-LOGIN -->
-  <div id="panel-section" class="container hidden">
-    <nav>
-      <h3>Painel</h3>
-      <a href="#" onclick="showPage('home')">🏠 Página Inicial</a>
-      <a href="#" onclick="showPage('profile')">👤 Perfil</a>
-      <a href="#" onclick="showPage('material')">📘 Material de Estudo</a>
-      <a href="#" onclick="showPage('courses')">🎓 Cursos</a>
-      <a href="#" onclick="showPage('simulados')">📝 Simulados</a>
-      <a href="#" onclick="showPage('flashcards')">🃏 Flashcards</a>
-      <a href="#" onclick="showPage('contact')">☎️ Fale Conosco</a>
-      <a href="#" onclick="logout()">🚪 Sair</a>
-    </nav>
-    <main>
-      <div id="home" class="page">
-        <h2>Bem-vindo à Plataforma Revalida</h2>
-        <p>Escolha uma opção no menu ao lado para começar.</p>
-      </div>
-      <div id="profile" class="page hidden">
-        <h2>Perfil</h2>
-        <p>Aqui você poderá editar suas informações.</p>
-      </div>
-      <div id="material" class="page hidden">
-        <h2>Material de Estudo</h2>
-        <p>Aqui você terá acesso a apostilas, artigos e muito mais.</p>
-      </div>
-      <div id="courses" class="page hidden">
-        <h2>Cursos</h2>
-        <p>Veja os cursos disponíveis para preparação.</p>
-      </div>
-      <div id="simulados" class="page hidden">
-        <h2>Simulados</h2>
-        <p>Teste seus conhecimentos com nossos simulados.</p>
-      </div>
-      <div id="flashcards" class="page hidden">
-        <h2>Flashcards</h2>
-        <p>Revise conteúdos com flashcards interativos.</p>
-      </div>
-      <div id="contact" class="page hidden">
-        <h2>Fale Conosco</h2>
-        <p>Entre em contato para suporte ou dúvidas.</p>
-      </div>
-    </main>
-  </div>
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
+const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-  <script>
-    // 🔑 Configuração do Supabase
-    const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
-    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// Elements
+const authForm = document.getElementById('authForm');
+const nameInput = document.getElementById('name');
+const ageInput = document.getElementById('age');
+const emailInput = document.getElementById('email');
+const passwordInput = document.getElementById('password');
+const submitBtn = document.getElementById('submitBtn');
+const toggleForm = document.getElementById('toggleForm');
+const formTitle = document.getElementById('formTitle');
+const messageDiv = document.getElementById('message');
+const logoutSection = document.getElementById('logoutSection');
+const logoutBtn = document.getElementById('logoutBtn');
+const loginCard = document.getElementById('loginCard');
+const panel = document.getElementById('panel');
+const sectionContent = document.getElementById('sectionContent');
 
-    const authSection = document.getElementById("auth-section");
-    const panelSection = document.getElementById("panel-section");
-    const toggleAuth = document.getElementById("toggle-auth");
-    const extraFields = document.getElementById("extra-fields");
-    const authTitle = document.getElementById("auth-title");
-    const loginBtn = document.getElementById("login-btn");
-    const signupBtn = document.getElementById("signup-btn");
+let isLogin = true;
 
-    let isSignup = false;
+// Alternar login/cadastro
+toggleForm.addEventListener('click', () => {
+  isLogin = !isLogin;
+  formTitle.textContent = isLogin ? 'Login' : 'Cadastro';
+  submitBtn.textContent = isLogin ? 'Entrar' : 'Cadastrar';
+  toggleForm.textContent = isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Faça login';
+  document.querySelectorAll('.extra').forEach(el => el.classList.toggle('hidden', isLogin));
+  messageDiv.textContent = '';
+});
 
-    toggleAuth.addEventListener("click", () => {
-      isSignup = !isSignup;
-      if (isSignup) {
-        authTitle.textContent = "Cadastro";
-        extraFields.classList.remove("hidden");
-        loginBtn.classList.add("hidden");
-        signupBtn.classList.remove("hidden");
-        toggleAuth.textContent = "Já tenho conta";
-      } else {
-        authTitle.textContent = "Login";
-        extraFields.classList.add("hidden");
-        loginBtn.classList.remove("hidden");
-        signupBtn.classList.add("hidden");
-        toggleAuth.textContent = "Criar conta";
-      }
-    });
+// Login/Cadastro
+authForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = emailInput.value;
+  const password = passwordInput.value;
+  messageDiv.textContent = "Aguarde...";
 
-    // Cadastro
-    signupBtn.addEventListener("click", async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const name = document.getElementById("name").value;
-      const age = document.getElementById("age").value;
+  try {
+    if (isLogin) {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      messageDiv.textContent = `Bem-vindo(a) ${email}!`;
+    } else {
+      const name = nameInput.value;
+      const age = parseInt(ageInput.value);
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) throw error;
 
-      const { data, error } = await supabaseClient.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { name, age },
-          emailRedirectTo: null // desabilitando confirmação
-        }
-      });
+      const userId = data.user.id;
+      const { error: insertError } = await supabase
+        .from('profiles')
+        .insert([{ id: userId, name, age }]);
+      if (insertError) throw insertError;
 
-      if (error) {
-        alert("Erro ao cadastrar: " + error.message);
-      } else {
-        alert("✅ Cadastro realizado com sucesso! Faça login para continuar.");
-        toggleAuth.click(); // volta para tela de login
-      }
-    });
-
-    // Login
-    loginBtn.addEventListener("click", async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
-
-      if (error) {
-        alert("Erro ao logar: " + error.message);
-      } else {
-        authSection.classList.add("hidden");
-        panelSection.classList.remove("hidden");
-        showPage("home");
-      }
-    });
-
-    // Logout
-    async function logout() {
-      await supabaseClient.auth.signOut();
-      panelSection.classList.add("hidden");
-      authSection.classList.remove("hidden");
+      messageDiv.textContent = "Cadastro realizado com sucesso! Faça login.";
+      isLogin = true;
+      formTitle.textContent = 'Login';
+      submitBtn.textContent = 'Entrar';
+      toggleForm.textContent = 'Não tem conta? Cadastre-se';
+      document.querySelectorAll('.extra').forEach(el => el.classList.add('hidden'));
     }
+    loginCard.style.display = 'none';
+    panel.style.display = 'block';
+  } catch (err) {
+    messageDiv.textContent = "Erro: " + err.message;
+  }
+});
 
-    // Alternar páginas
-    function showPage(pageId) {
-      document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
-      document.getElementById(pageId).classList.remove("hidden");
-    }
-  </script>
+// Logout
+logoutBtn.addEventListener('click', async () => {
+  const { error } = await supabase.auth.signOut();
+  if (error) messageDiv.textContent = "Erro ao sair: " + error.message;
+  else {
+    messageDiv.textContent = "Saiu com sucesso!";
+    logoutSection.classList.add('hidden');
+    authForm.reset();
+    loginCard.style.display = 'block';
+    panel.style.display = 'none';
+  }
+});
+
+// Checar sessão
+async function checkSession() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session) {
+    loginCard.style.display = 'none';
+    panel.style.display = 'block';
+    messageDiv.textContent = `Bem-vindo(a) ${session.user.email}`;
+  }
+}
+checkSession();
+</script>
 </body>
 </html>
 
