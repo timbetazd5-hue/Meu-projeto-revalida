@@ -1,203 +1,253 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Plataforma Revalida</title>
-<style>
-  body { margin:0; font-family:'Segoe UI', sans-serif; background:#f5f7fa; color:#1f2937; }
-  h1,h2 { margin:0 0 16px 0; }
-  p { margin:0 0 12px 0; }
-
-  /* ===== LOGIN ===== */
-  #loginSection { display:flex; justify-content:center; align-items:center; height:100vh; background:linear-gradient(to right, #c7d2fe, #e0e7ff); transition: all 0.3s ease; }
-  #loginCard { background:#ffffff; padding:32px; border-radius:16px; width:380px; box-shadow:0 10px 30px rgba(0,0,0,0.15); transition: all 0.3s ease; }
-  #loginCard h1 { text-align:center; color:#4f46e5; font-size:1.8rem; }
-  #loginCard input, #loginCard button { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:1px solid #d1d5db; font-size:1rem; }
-  #loginCard input:focus { border-color:#6366f1; outline:none; }
-  #loginCard button { background:#6366f1; color:white; cursor:pointer; font-weight:bold; border:none; transition: background 0.3s; }
-  #loginCard button:hover { background:#4f46e5; }
-  .switch { text-align:center; color:#4f46e5; cursor:pointer; text-decoration:underline; margin-top:10px; font-size:0.9rem; }
-  .message { text-align:center; font-size:0.9rem; margin-top:6px; color:#dc2626; }
-  .hidden { display:none; }
-
-  /* ===== PAINEL ===== */
-  #panel { display:none; height:100vh; display:flex; }
-  #sidebar { width:240px; background:#f3f4f6; height:100%; position:fixed; padding-top:20px; box-shadow:2px 0 8px rgba(0,0,0,0.05); transition: all 0.3s; }
-  #sidebar a { display:block; padding:14px 20px; color:#1f2937; text-decoration:none; border-radius:8px; margin:6px 12px; transition: background 0.3s, color 0.3s; font-weight:500; }
-  #sidebar a:hover { background:#6366f1; color:white; }
-  #mainContent { margin-left:260px; padding:24px; transition: all 0.3s; background:#f9fafb; height:100vh; overflow-y:auto; }
-  #logoutBtn { background:#ef4444; color:white; border:none; padding:10px 16px; border-radius:8px; cursor:pointer; margin:16px 12px 0 12px; transition: background 0.3s; width: calc(100% - 24px); }
-  #logoutBtn:hover { background:#dc2626; }
-
-  /* ===== ABAS INTERNAS ===== */
-  .tab { display:none; }
-  .tab.active { display:block; }
-  .tab-buttons button { margin:0 6px 12px 0; padding:8px 12px; border:none; border-radius:8px; background:#e5e7eb; cursor:pointer; transition: background 0.3s, transform 0.2s; }
-  .tab-buttons button.active { background:#6366f1; color:white; }
-  .tab-buttons button:hover { background:#a5b4fc; transform:scale(1.05); }
-
-  /* ===== CARDS ===== */
-  .card-container { display:flex; flex-wrap: wrap; gap:16px; }
-  .card { background:white; padding:16px; border-radius:12px; box-shadow:0 6px 20px rgba(0,0,0,0.1); flex:1 1 200px; transition: transform 0.3s, box-shadow 0.3s; }
-  .card:hover { transform: translateY(-5px); box-shadow:0 10px 30px rgba(0,0,0,0.15); }
-
-  @media(max-width:768px){
-    #sidebar { width:200px; }
-    #mainContent { margin-left:220px; padding:16px; }
-    #loginCard { width:90%; }
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Plataforma Revalida</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      color: #333;
+    }
+    header {
+      background: #4e73df;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    /* Área lateral */
+    nav {
+      width: 220px;
+      background: #2e59d9;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      margin: 10px 0;
+      padding: 8px;
+      border-radius: 6px;
+      transition: 0.3s;
+    }
+    nav a:hover {
+      background: #224abe;
+    }
+    /* Conteúdo */
+    main {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+    }
+    /* Área de login/cadastro */
+    .auth-container {
+      max-width: 400px;
+      margin: 50px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .auth-container h2 {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .auth-container input {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    .auth-container button {
+      width: 100%;
+      padding: 12px;
+      background: #4e73df;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .auth-container button:hover {
+      background: #224abe;
+    }
+    .hidden {
+      display: none;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>Plataforma Revalida</h1>
+  </header>
 
-<!-- ===== LOGIN ===== -->
-<div id="loginSection">
-  <div id="loginCard">
-    <h1 id="formTitle">Login</h1>
-    <form id="authForm">
-      <input type="text" id="name" placeholder="Nome completo" class="extra hidden">
-      <input type="number" id="age" placeholder="Idade" class="extra hidden">
-      <input type="email" id="email" placeholder="E-mail" required>
-      <input type="password" id="password" placeholder="Senha" required minlength="6">
-      <button type="submit" id="submitBtn">Entrar</button>
-    </form>
-    <div class="switch" id="toggleForm">Não tem conta? Cadastre-se</div>
-    <div class="message" id="message"></div>
+  <!-- LOGIN E CADASTRO -->
+  <div id="auth-section" class="auth-container">
+    <h2 id="auth-title">Login</h2>
+    <input type="email" id="email" placeholder="E-mail" required>
+    <input type="password" id="password" placeholder="Senha" required>
+    
+    <div id="extra-fields" class="hidden">
+      <input type="text" id="name" placeholder="Nome completo">
+      <input type="number" id="age" placeholder="Idade">
+    </div>
+
+    <button id="login-btn">Entrar</button>
+    <button id="signup-btn">Cadastrar</button>
+
+    <p id="toggle-auth" style="text-align:center; margin-top:10px; cursor:pointer; color:#4e73df;">
+      Criar conta
+    </p>
   </div>
-</div>
 
-<!-- ===== PAINEL ===== -->
-<div id="panel">
-  <div id="sidebar">
-    <a href="#" data-page="home">Página Inicial</a>
-    <a href="#" data-page="profile">Perfil</a>
-    <a href="#" data-page="material">Material de Estudo</a>
-    <a href="#" data-page="courses">Cursos</a>
-    <a href="#" data-page="simulados">Simulados</a>
-    <a href="#" data-page="flashcards">Flashcards</a>
-    <a href="#" data-page="contact">Fale Conosco</a>
-    <button id="logoutBtn">Sair</button>
+  <!-- PAINEL PÓS-LOGIN -->
+  <div id="panel-section" class="container hidden">
+    <nav>
+      <h3>Painel</h3>
+      <a href="#" onclick="showPage('home')">🏠 Página Inicial</a>
+      <a href="#" onclick="showPage('profile')">👤 Perfil</a>
+      <a href="#" onclick="showPage('material')">📘 Material de Estudo</a>
+      <a href="#" onclick="showPage('courses')">🎓 Cursos</a>
+      <a href="#" onclick="showPage('simulados')">📝 Simulados</a>
+      <a href="#" onclick="showPage('flashcards')">🃏 Flashcards</a>
+      <a href="#" onclick="showPage('contact')">☎️ Fale Conosco</a>
+      <a href="#" onclick="logout()">🚪 Sair</a>
+    </nav>
+    <main>
+      <div id="home" class="page">
+        <h2>Bem-vindo à Plataforma Revalida</h2>
+        <p>Escolha uma opção no menu ao lado para começar.</p>
+      </div>
+      <div id="profile" class="page hidden">
+        <h2>Perfil</h2>
+        <p>Aqui você poderá editar suas informações.</p>
+      </div>
+      <div id="material" class="page hidden">
+        <h2>Material de Estudo</h2>
+        <p>Aqui você terá acesso a apostilas, artigos e muito mais.</p>
+      </div>
+      <div id="courses" class="page hidden">
+        <h2>Cursos</h2>
+        <p>Veja os cursos disponíveis para preparação.</p>
+      </div>
+      <div id="simulados" class="page hidden">
+        <h2>Simulados</h2>
+        <p>Teste seus conhecimentos com nossos simulados.</p>
+      </div>
+      <div id="flashcards" class="page hidden">
+        <h2>Flashcards</h2>
+        <p>Revise conteúdos com flashcards interativos.</p>
+      </div>
+      <div id="contact" class="page hidden">
+        <h2>Fale Conosco</h2>
+        <p>Entre em contato para suporte ou dúvidas.</p>
+      </div>
+    </main>
   </div>
-  <div id="mainContent">
-    <h2>Página Inicial</h2>
-    <p>Bem-vindo(a) ao seu painel! Use o menu lateral para navegar pelas seções.</p>
-  </div>
-</div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  <script>
+    // 🔑 Configuração do Supabase
+    const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const loginSection = document.getElementById('loginSection');
-const panel = document.getElementById('panel');
-const authForm = document.getElementById('authForm');
-const nameInput = document.getElementById('name');
-const ageInput = document.getElementById('age');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const submitBtn = document.getElementById('submitBtn');
-const toggleForm = document.getElementById('toggleForm');
-const formTitle = document.getElementById('formTitle');
-const messageDiv = document.getElementById('message');
-const logoutBtn = document.getElementById('logoutBtn');
-const mainContent = document.getElementById('mainContent');
+    const authSection = document.getElementById("auth-section");
+    const panelSection = document.getElementById("panel-section");
+    const toggleAuth = document.getElementById("toggle-auth");
+    const extraFields = document.getElementById("extra-fields");
+    const authTitle = document.getElementById("auth-title");
+    const loginBtn = document.getElementById("login-btn");
+    const signupBtn = document.getElementById("signup-btn");
 
-let isLogin = true;
+    let isSignup = false;
 
-// Alternar login/cadastro
-toggleForm.addEventListener('click', () => {
-  isLogin = !isLogin;
-  formTitle.textContent = isLogin ? 'Login' : 'Cadastro';
-  submitBtn.textContent = isLogin ? 'Entrar' : 'Cadastrar';
-  toggleForm.textContent = isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Faça login';
-  document.querySelectorAll('.extra').forEach(el => el.classList.toggle('hidden', isLogin));
-  messageDiv.textContent = '';
-});
+    toggleAuth.addEventListener("click", () => {
+      isSignup = !isSignup;
+      if (isSignup) {
+        authTitle.textContent = "Cadastro";
+        extraFields.classList.remove("hidden");
+        loginBtn.classList.add("hidden");
+        signupBtn.classList.remove("hidden");
+        toggleAuth.textContent = "Já tenho conta";
+      } else {
+        authTitle.textContent = "Login";
+        extraFields.classList.add("hidden");
+        loginBtn.classList.remove("hidden");
+        signupBtn.classList.add("hidden");
+        toggleAuth.textContent = "Criar conta";
+      }
+    });
 
-// Login/Cadastro
-authForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  messageDiv.textContent = "Aguarde...";
+    // Cadastro
+    signupBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const name = document.getElementById("name").value;
+      const age = document.getElementById("age").value;
 
-  try {
-    if(isLogin){
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if(error) throw error;
-      messageDiv.textContent = `Bem-vindo(a) ${email}!`;
-      loginSection.style.display = 'none';
-      panel.style.display = 'flex';
-    } else {
-      const name = nameInput.value;
-      const age = parseInt(ageInput.value);
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if(error) throw error;
+      const { data, error } = await supabaseClient.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { name, age },
+          emailRedirectTo: null // desabilitando confirmação
+        }
+      });
 
-      const userId = data.user.id;
-      const { error: insertError } = await supabase.from('profiles').insert([{ id: userId, name, age }]);
-      if(insertError) throw insertError;
+      if (error) {
+        alert("Erro ao cadastrar: " + error.message);
+      } else {
+        alert("✅ Cadastro realizado com sucesso! Faça login para continuar.");
+        toggleAuth.click(); // volta para tela de login
+      }
+    });
 
-      messageDiv.textContent = "Cadastro completo com sucesso! Faça login.";
+    // Login
+    loginBtn.addEventListener("click", async () => {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        alert("Erro ao logar: " + error.message);
+      } else {
+        authSection.classList.add("hidden");
+        panelSection.classList.remove("hidden");
+        showPage("home");
+      }
+    });
+
+    // Logout
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      panelSection.classList.add("hidden");
+      authSection.classList.remove("hidden");
     }
-  } catch(err) {
-    messageDiv.textContent = "Erro: " + err.message;
-  }
-});
 
-// Logout
-logoutBtn.addEventListener('click', async () => {
-  const { error } = await supabase.auth.signOut();
-  if(error) messageDiv.textContent = "Erro ao sair: " + error.message;
-  else {
-    messageDiv.textContent = "";
-    panel.style.display = 'none';
-    loginSection.style.display = 'flex';
-    authForm.reset();
-  }
-});
-
-// Navegação painel
-document.querySelectorAll('#sidebar a').forEach(link => {
-  link.addEventListener('click', (e) => {
-    e.preventDefault();
-    const page = link.getAttribute('data-page');
-    let content = "";
-    switch(page){
-      case "home": content="<h2>Página Inicial</h2><p>Bem-vindo(a) ao seu painel!</p>"; break;
-      case "profile": content="<h2>Perfil</h2><p>Edite suas informações.</p>"; break;
-      case "material": content=`<h2>Material de Estudo</h2>
-        <div class="card-container">
-          <div class="card">PDFs disponíveis</div>
-          <div class="card">Vídeos de estudo</div>
-          <div class="card">Links úteis</div>
-        </div>`; break;
-      case "courses": content=`<h2>Cursos</h2>
-        <div class="card-container">
-          <div class="card">Curso 1</div>
-          <div class="card">Curso 2</div>
-        </div>`; break;
-      case "simulados": content=`<h2>Simulados</h2>
-        <div class="card-container">
-          <div class="card">Simulado 1</div>
-          <div class="card">Simulado 2</div>
-        </div>`; break;
-      case "flashcards": content=`<h2>Flashcards</h2>
-        <div class="card-container">
-          <div class="card">Tema 1</div>
-          <div class="card">Tema 2</div>
-        </div>`; break;
-      case "contact": content="<h2>Fale Conosco</h2><p>Entre em contato conosco.</p>"; break;
+    // Alternar páginas
+    function showPage(pageId) {
+      document.querySelectorAll(".page").forEach(p => p.classList.add("hidden"));
+      document.getElementById(pageId).classList.remove("hidden");
     }
-    mainContent.innerHTML = content;
-  });
-});
-</script>
+  </script>
 </body>
 </html>
+
+
 
 
 
