@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cadastro/Login com Supabase</title>
+<style>
+  body { font-family:sans-serif; background:#0f172a; color:#e2e8f0;
+         display:flex; justify-content:center; align-items:center; height:100vh; margin:0; }
+  .card { background:#0b1220; padding:28px; border-radius:16px; width:380px;
+          box-shadow:0 10px 30px rgba(0,0,0,0.5); }
+  h1 { margin-top:0; text-align:center; }
+  input, button { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:none; }
+  button { background:#6366f1; color:#fff; cursor:pointer; }
+  button:hover { background:#4f46e5; }
+  .switch { color:#a5b4fc; cursor:pointer; text-decoration:underline; text-align:center; margin-top:8px; }
+  .message { text-align:center; margin-top:8px; font-size:0.9rem; }
+  .hidden { display:none; }
+  .panel { text-align:center; }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <!-- Formulário -->
+  <div id="authSection">
+    <h1 id="formTitle">Login</h1>
+    <form id="authForm">
+      <input type="text" id="name" placeholder="Nome completo" class="extra hidden">
+      <input type="number" id="age" placeholder="Idade" class="extra hidden">
+      <input type="email" id="email" placeholder="E-mail" required>
+      <input type="password" id="password" placeholder="Senha" required minlength="6">
+      <button type="submit" id="submitBtn">Entrar</button>
+    </form>
+    <div class="switch" id="toggleForm">Não tem conta? Cadastre-se</div>
+    <div class="message" id="message"></div>
+  </div>
+
+  <!-- Painel -->
+  <div id="panelSection" class="hidden panel">
+    <h1>🎉 Bem-vindo(a)!</h1>
+    <p><b>Nome:</b> <span id="profileName"></span></p>
+    <p><b>Idade:</b> <span id="profileAge"></span></p>
+    <p><b>Email:</b> <span id="profileEmail"></span></p>
+    <button id="logoutBtn">Sair</button>
+  </div>
+</div>
+
+<!-- Supabase SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+<script>
+  const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
+  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  const authSection = document.getElementById('authSection');
+  const panelSection = document.getElementById('panelSection');
+  const nameInput = document.getElementById('name');
+  const ageInput = document.getElementById('age');
+  const emailInput = document.getElementById('email');
+  const passwordInput = document.getElementById('password');
+  const submitBtn = document.getElementById('submitBtn');
+  const toggleForm = document.getElementById('toggleForm');
+  const formTitle = document.getElementById('formTitle');
+  const messageDiv = document.getElementById('message');
+  const profileName = document.getElementById('profileName');
+  const profileAge = document.getElementById('profileAge');
+  const profileEmail = document.getElementById('profileEmail');
+  const logoutBtn = document.getElementById('logoutBtn');
+
+  let isLogin = true;
+
+  toggleForm.addEventListener('click', () => {
+    isLogin = !isLogin;
+    formTitle.textContent = isLogin ? 'Login' : 'Cadastro';
+    submitBtn.textContent = isLogin ? 'Entrar' : 'Cadastrar';
+    toggleForm.textContent = isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Faça login';
+    document.querySelectorAll('.extra').forEach(el => el.classList.toggle('hidden', isLogin));
+    messageDiv.textContent = '';
+  });
+
+  authForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = emailInput.value;
+    const password = passwordInput.value;
+    messageDiv.textContent = "Aguarde...";
+
+    try {
+      if (isLogin) {
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        await carregarPerfil(data.user);
+      } else {
+        const name = nameInput.value;
+        const age = parseInt(ageInput.value);
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        if (error) throw error;
+
+        const userId = data.user.id;
+        const { error: insertError } = await supabase.from('profiles').insert([{ id: userId, name, age }]);
+        if (insertError) throw insertError;
+
+        await carregarPerfil(data.user);
+      }
+    } catch (err) {
+      messageDiv.textContent = "Erro: " + err.message;
+    }
+  });
+
+  async function carregarPerfil(user) {
+    const { data: profile, error } = await supabase.from('profiles').select('*').eq('id', user.id).single();
+    if (error) {
+      messageDiv.textContent = "Erro ao carregar perfil: " + error.message;
+      return;
+    }
+    profileName.textContent = profile.name || "(não informado)";
+    profileAge.textContent = profile.age || "(não informado)";
+    profileEmail.textContent = user.email;
+    authSection.classList.add('hidden');
+    panelSection.classList.remove('hidden');
+  }
+
+  logoutBtn.addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    authSection.classList.remove('hidden');
+    panelSection.classList.add('hidden');
+    authForm.reset();
+  });
+
+  async function checkSession() {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      await carregarPerfil(session.user);
+    }
+  }
+  checkSession();
+</script>
+</body>
+</html>
