@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Confirme seu e-mail</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .container {
+    background-color: #ffffff;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    text-align: center;
+  }
+  h2 { color: #333; }
+  p { color: #555; }
+  a {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #6366f1;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+  }
+  a:hover {
+    background-color: #4f46e5;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Confirme seu cadastro</h2>
+  <p>Obrigado por se cadastrar! Clique no botão abaixo para confirmar seu e-mail:</p>
+  <a href="https://quiet-squirrel-0d55ac.netlify.app
+/auth/confirm?token_hash={{ .TokenHash }}&type=email">Confirmar e-mail</a>
+</div>
+</body>
+</html>
