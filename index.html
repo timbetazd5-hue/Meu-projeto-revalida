@@ -21,12 +21,42 @@
   .panel { display:none; max-width:1200px; margin:20px auto; padding:0 20px; }
   .panel-container { display:flex; min-height:80vh; gap:20px; }
 
-  /* Menu lateral */
-  .side-menu { width:200px; background:#e0e7ff; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:10px; }
-  .side-menu button { background:#e0e7ff; border:none; border-radius:8px; padding:10px; cursor:pointer; text-align:left; }
-  .side-menu button:hover { background:#c7d2fe; }
-  .side-menu button.active { background:#6366f1; color:#fff; }
-  .side-menu button#logoutBtnSide { margin-top:auto; background:#ef4444; color:#fff; }
+  /* Menu lateral profissional */
+  .side-menu {
+    width: 200px;
+    background: #1e40af; /* azul escuro */
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .side-menu button {
+    background: transparent;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.3s;
+  }
+
+  .side-menu button:hover {
+    background: #3b82f6; /* azul médio */
+  }
+
+  .side-menu button.active {
+    background: #2563eb; /* azul claro */
+    font-weight: bold;
+  }
+
+  .side-menu button#logoutBtnSide {
+    margin-top: auto;
+    background: #ef4444; /* vermelho */
+    color: #fff;
+  }
 
   /* Área de conteúdo */
   .content-area { flex:1; display:flex; flex-direction:column; gap:12px; }
@@ -99,7 +129,6 @@ const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Elements
 const authForm = document.getElementById('authForm');
 const nameInput = document.getElementById('name');
 const ageInput = document.getElementById('age');
@@ -208,7 +237,7 @@ function showSection(name) {
   document.getElementById('sectionContent').innerHTML = `<h2>${name}</h2><p>Conteúdo da seção ${name}.</p>`;
 }
 
-// Função de pesquisa (placeholder)
+// Função de pesquisa
 function searchSite() {
   const query = document.getElementById('siteSearch').value;
   document.getElementById('sectionContent').innerHTML = `<h2>Pesquisar: ${query}</h2><p>Resultados da pesquisa.</p>`;
