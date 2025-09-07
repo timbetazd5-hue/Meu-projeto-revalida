@@ -109,9 +109,8 @@ header .top-bar input[type="text"] { width:200px; padding:6px; border-radius:6px
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
-// --- Supabase Auth ---
 const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
-const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE"; 
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const authForm = document.getElementById('authForm');
@@ -128,6 +127,8 @@ const panel = document.getElementById('panel');
 const logoutBtnSide = document.getElementById('logoutBtnSide');
 
 let isLogin = true;
+
+// Alternar login/cadastro
 toggleForm.addEventListener('click', () => {
   isLogin = !isLogin;
   formTitle.textContent = isLogin ? 'Login' : 'Cadastro';
@@ -137,33 +138,52 @@ toggleForm.addEventListener('click', () => {
   messageDiv.textContent = '';
 });
 
+// Login/Cadastro robusto
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  const email = emailInput.value;
-  const password = passwordInput.value;
+  
+  const email = emailInput.value.trim();
+  const password = passwordInput.value.trim();
+  
   messageDiv.style.color = '#ef4444';
   messageDiv.textContent = "Aguarde...";
+
+  if (!email || !password) {
+    messageDiv.textContent = "Preencha email e senha corretamente.";
+    return;
+  }
+
   try {
     if (isLogin) {
       const { data, error } = await client.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      if (!data.session) throw new Error("Usuário ou senha incorretos");
+      if (error) throw new Error(error.message);
+      if (!data.session) throw new Error("Email ou senha incorretos.");
+
       messageDiv.style.color = '#16a34a';
       messageDiv.textContent = `Bem-vindo(a) ${email}!`;
       loginCard.style.display = 'none';
       panel.style.display = 'block';
       showSection('Dashboard');
+
     } else {
       const name = nameInput.value.trim();
       const age = parseInt(ageInput.value);
-      if (!name || !age) throw new Error("Preencha nome e idade corretamente.");
+
+      if (!name || !age || !email || !password) {
+        messageDiv.textContent = "Preencha todos os campos corretamente.";
+        return;
+      }
+
       const { data, error } = await client.auth.signUp({ email, password });
-      if (error) throw error;
+      if (error) throw new Error(error.message);
+
       const userId = data.user.id;
       const { error: insertError } = await client.from('profiles').insert([{ id: userId, name, age }]);
-      if (insertError) throw insertError;
+      if (insertError) throw new Error(insertError.message);
+
       messageDiv.style.color = '#16a34a';
-      messageDiv.textContent = "Cadastro realizado! Faça login.";
+      messageDiv.textContent = "Cadastro realizado com sucesso! Faça login.";
+
       isLogin = true;
       formTitle.textContent = 'Login';
       submitBtn.textContent = 'Entrar';
@@ -171,9 +191,14 @@ authForm.addEventListener('submit', async (e) => {
       document.querySelectorAll('.extra').forEach(el => el.classList.add('hidden'));
       authForm.reset();
     }
-  } catch (err) { messageDiv.style.color = '#ef4444'; messageDiv.textContent = "Erro: " + err.message; }
+
+  } catch (err) {
+    messageDiv.style.color = '#ef4444';
+    messageDiv.textContent = `Erro: ${err.message}`;
+  }
 });
 
+// Logout
 logoutBtnSide.addEventListener('click', async () => {
   const { error } = await client.auth.signOut();
   if (error) { messageDiv.textContent = "Erro ao sair: " + error.message; return; }
@@ -184,6 +209,7 @@ logoutBtnSide.addEventListener('click', async () => {
   panel.style.display = 'none';
 });
 
+// Verificar sessão
 async function checkSession() {
   const { data: { session } } = await client.auth.getSession();
   if (session) {
@@ -196,6 +222,7 @@ async function checkSession() {
 }
 checkSession();
 
+// Alternar seções
 function showSection(name) {
   document.querySelectorAll('.side-menu button').forEach(btn => btn.classList.remove('active'));
   const btn = Array.from(document.querySelectorAll('.side-menu button')).find(b => b.textContent===name);
@@ -223,6 +250,7 @@ function showSection(name) {
   document.getElementById('sectionContent').innerHTML = content;
 }
 
+// Busca simulada
 function searchSite() {
   const query = document.getElementById('siteSearch').value.toLowerCase();
   const contentDiv = document.getElementById('sectionContent');
