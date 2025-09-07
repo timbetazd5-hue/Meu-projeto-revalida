@@ -68,7 +68,7 @@
 <script>
 const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Elements
 const authForm = document.getElementById('authForm');
@@ -80,7 +80,6 @@ const submitBtn = document.getElementById('submitBtn');
 const toggleForm = document.getElementById('toggleForm');
 const formTitle = document.getElementById('formTitle');
 const messageDiv = document.getElementById('message');
-const logoutSection = document.getElementById('logoutSection');
 const logoutBtn = document.getElementById('logoutBtn');
 const loginCard = document.getElementById('loginCard');
 const panel = document.getElementById('panel');
@@ -107,30 +106,36 @@ authForm.addEventListener('submit', async (e) => {
 
   try {
     if (isLogin) {
-      const { error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-      messageDiv.textContent = `Bem-vindo(a) ${email}!`;
-    } else {
-      const name = nameInput.value;
-      const age = parseInt(ageInput.value);
-      const { data, error } = await supabase.auth.signUp({ email, password });
+      // Login
+      const { error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
 
-      const userId = data.user.id;
-      const { error: insertError } = await supabase
+      messageDiv.textContent = `Bem-vindo(a) ${email}!`;
+      loginCard.style.display = 'none';
+      panel.style.display = 'block';
+    } else {
+      // Cadastro
+      const name = nameInput.value;
+      const age = parseInt(ageInput.value);
+      const { data, error } = await client.auth.signUp({ email, password });
+      if (error) throw error;
+
+      const userId = data.user?.id;
+      if (!userId) throw new Error("Não foi possível criar usuário.");
+
+      // Inserir no perfil
+      const { error: insertError } = await client
         .from('profiles')
         .insert([{ id: userId, name, age }]);
       if (insertError) throw insertError;
 
-      messageDiv.textContent = "Cadastro realizado com sucesso! Faça login.";
+      messageDiv.textContent = "Cadastro realizado com sucesso! Agora faça login.";
       isLogin = true;
       formTitle.textContent = 'Login';
       submitBtn.textContent = 'Entrar';
       toggleForm.textContent = 'Não tem conta? Cadastre-se';
       document.querySelectorAll('.extra').forEach(el => el.classList.add('hidden'));
     }
-    loginCard.style.display = 'none';
-    panel.style.display = 'block';
   } catch (err) {
     messageDiv.textContent = "Erro: " + err.message;
   }
@@ -138,11 +143,11 @@ authForm.addEventListener('submit', async (e) => {
 
 // Logout
 logoutBtn.addEventListener('click', async () => {
-  const { error } = await supabase.auth.signOut();
-  if (error) messageDiv.textContent = "Erro ao sair: " + error.message;
-  else {
+  const { error } = await client.auth.signOut();
+  if (error) {
+    messageDiv.textContent = "Erro ao sair: " + error.message;
+  } else {
     messageDiv.textContent = "Saiu com sucesso!";
-    logoutSection.classList.add('hidden');
     authForm.reset();
     loginCard.style.display = 'block';
     panel.style.display = 'none';
@@ -151,7 +156,7 @@ logoutBtn.addEventListener('click', async () => {
 
 // Checar sessão
 async function checkSession() {
-  const { data: { session } } = await supabase.auth.getSession();
+  const { data: { session } } = await client.auth.getSession();
   if (session) {
     loginCard.style.display = 'none';
     panel.style.display = 'block';
