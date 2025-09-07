@@ -6,6 +6,8 @@
 <title>Plataforma Revalida</title>
 <style>
   body { font-family:sans-serif; background:#f0f4f8; margin:0; }
+
+  /* Login/Cadastro */
   .login-card { background:#ffffff; padding:28px; border-radius:16px; width:360px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin:50px auto; }
   h1 { margin-top:0; text-align:center; color:#1f2937; }
   input { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; }
@@ -16,11 +18,33 @@
   .hidden { display:none; }
 
   /* Painel */
-  .panel { display:none; padding:20px; max-width:900px; margin:50px auto; background:#ffffff; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1); }
-  .nav { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; }
-  .nav button { flex:1; background:#e0e7ff; color:#1f2937; font-weight:bold; }
-  .nav button.active { background:#6366f1; color:#fff; }
-  .content input[type="text"] { border:1px solid #ccc; padding:8px; border-radius:6px; margin-bottom:12px; width:100%; }
+  .panel { display:none; max-width:1200px; margin:20px auto; padding:0 20px; }
+  .panel-container { display:flex; min-height:80vh; gap:20px; }
+
+  /* Menu lateral */
+  .side-menu { width:200px; background:#e0e7ff; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:10px; }
+  .side-menu button { background:#e0e7ff; border:none; border-radius:8px; padding:10px; cursor:pointer; text-align:left; }
+  .side-menu button:hover { background:#c7d2fe; }
+  .side-menu button.active { background:#6366f1; color:#fff; }
+  .side-menu button#logoutBtnSide { margin-top:auto; background:#ef4444; color:#fff; }
+
+  /* Área de conteúdo */
+  .content-area { flex:1; display:flex; flex-direction:column; gap:12px; }
+
+  /* Barra de pesquisa no topo à direita */
+  .top-bar { display:flex; justify-content:flex-end; padding:10px 0; }
+  .top-bar input[type="text"] { width:200px; padding:6px; border-radius:6px; border:1px solid #ccc; }
+
+  #sectionContent { background:#fff; padding:20px; border-radius:16px; box-shadow:0 5px 15px rgba(0,0,0,0.1); flex:1; }
+
+  /* Responsividade */
+  @media (max-width:768px){
+    .panel-container { flex-direction:column; }
+    .side-menu { width:100%; flex-direction:row; overflow-x:auto; }
+    .side-menu button { flex:1; text-align:center; }
+    .top-bar { justify-content:flex-start; }
+    .top-bar input[type="text"] { width:100%; }
+  }
 </style>
 </head>
 <body>
@@ -37,28 +61,33 @@
   </form>
   <div class="switch" id="toggleForm">Não tem conta? Cadastre-se</div>
   <div class="message" id="message"></div>
-  <div class="message hidden" id="logoutSection">
-    <button id="logoutBtn">Sair</button>
-  </div>
 </div>
 
 <!-- Painel -->
 <div class="panel" id="panel">
-  <div class="nav" id="panelNav">
-    <button class="active" onclick="showSection('home')">Página Inicial</button>
-    <button onclick="showSection('profile')">Perfil</button>
-    <button onclick="showSection('material')">Material de Estudo</button>
-    <button onclick="showSection('courses')">Cursos</button>
-    <button onclick="showSection('simulados')">Simulados</button>
-    <button onclick="showSection('flashcards')">Flashcards</button>
-    <button onclick="showSection('library')">Biblioteca</button>
-    <button onclick="showSection('contact')">Fale Conosco</button>
-  </div>
-  <div class="content" id="content">
-    <input type="text" id="siteSearch" placeholder="Pesquisar..." oninput="searchSite()">
-    <div id="sectionContent">
-      <h2>Página Inicial</h2>
-      <p>Bem-vindo ao seu painel de controle.</p>
+  <div class="panel-container">
+    <!-- Menu lateral -->
+    <div class="side-menu">
+      <button class="active" onclick="showSection('Página Inicial')">Página Inicial</button>
+      <button onclick="showSection('Perfil')">Perfil</button>
+      <button onclick="showSection('Material de Estudo')">Material de Estudo</button>
+      <button onclick="showSection('Cursos')">Cursos</button>
+      <button onclick="showSection('Simulados')">Simulados</button>
+      <button onclick="showSection('Flashcards')">Flashcards</button>
+      <button onclick="showSection('Biblioteca')">Biblioteca</button>
+      <button onclick="showSection('Fale Conosco')">Fale Conosco</button>
+      <button id="logoutBtnSide">Sair</button>
+    </div>
+
+    <!-- Conteúdo -->
+    <div class="content-area">
+      <div class="top-bar">
+        <input type="text" id="siteSearch" placeholder="Pesquisar..." oninput="searchSite()">
+      </div>
+      <div id="sectionContent">
+        <h2>Página Inicial</h2>
+        <p>Bem-vindo ao seu painel de controle.</p>
+      </div>
     </div>
   </div>
 </div>
@@ -68,7 +97,7 @@
 <script>
 const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Elements
 const authForm = document.getElementById('authForm');
@@ -80,10 +109,9 @@ const submitBtn = document.getElementById('submitBtn');
 const toggleForm = document.getElementById('toggleForm');
 const formTitle = document.getElementById('formTitle');
 const messageDiv = document.getElementById('message');
-const logoutBtn = document.getElementById('logoutBtn');
 const loginCard = document.getElementById('loginCard');
 const panel = document.getElementById('panel');
-const sectionContent = document.getElementById('sectionContent');
+const logoutBtnSide = document.getElementById('logoutBtnSide');
 
 let isLogin = true;
 
@@ -102,57 +130,62 @@ authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = emailInput.value;
   const password = passwordInput.value;
+  messageDiv.style.color = '#ef4444';
   messageDiv.textContent = "Aguarde...";
 
   try {
     if (isLogin) {
-      // Login
-      const { error } = await client.auth.signInWithPassword({ email, password });
+      const { data, error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
+      if (!data.session) throw new Error("Usuário ou senha incorretos");
 
+      messageDiv.style.color = '#16a34a';
       messageDiv.textContent = `Bem-vindo(a) ${email}!`;
       loginCard.style.display = 'none';
       panel.style.display = 'block';
     } else {
-      // Cadastro
-      const name = nameInput.value;
+      const name = nameInput.value.trim();
       const age = parseInt(ageInput.value);
+      if (!name || !age) throw new Error("Preencha nome e idade corretamente.");
+
       const { data, error } = await client.auth.signUp({ email, password });
       if (error) throw error;
+      if (!data.user) throw new Error("Não foi possível criar usuário.");
 
-      const userId = data.user?.id;
-      if (!userId) throw new Error("Não foi possível criar usuário.");
-
-      // Inserir no perfil
-      const { error: insertError } = await client
-        .from('profiles')
-        .insert([{ id: userId, name, age }]);
+      const userId = data.user.id;
+      const { error: insertError } = await client.from('profiles').insert([{ id: userId, name, age }]);
       if (insertError) throw insertError;
 
-      messageDiv.textContent = "Cadastro realizado com sucesso! Agora faça login.";
+      messageDiv.style.color = '#16a34a';
+      messageDiv.textContent = "Cadastro realizado com sucesso! Faça login.";
       isLogin = true;
       formTitle.textContent = 'Login';
       submitBtn.textContent = 'Entrar';
       toggleForm.textContent = 'Não tem conta? Cadastre-se';
       document.querySelectorAll('.extra').forEach(el => el.classList.add('hidden'));
+      authForm.reset();
     }
   } catch (err) {
+    messageDiv.style.color = '#ef4444';
     messageDiv.textContent = "Erro: " + err.message;
   }
 });
 
 // Logout
-logoutBtn.addEventListener('click', async () => {
+async function logout() {
   const { error } = await client.auth.signOut();
   if (error) {
+    messageDiv.style.color = '#ef4444';
     messageDiv.textContent = "Erro ao sair: " + error.message;
-  } else {
-    messageDiv.textContent = "Saiu com sucesso!";
-    authForm.reset();
-    loginCard.style.display = 'block';
-    panel.style.display = 'none';
+    return;
   }
-});
+  messageDiv.style.color = '#16a34a';
+  messageDiv.textContent = "Saiu com sucesso!";
+  authForm.reset();
+  loginCard.style.display = 'block';
+  panel.style.display = 'none';
+}
+logoutBtnSide.addEventListener('click', logout);
 
 // Checar sessão
 async function checkSession() {
@@ -160,15 +193,29 @@ async function checkSession() {
   if (session) {
     loginCard.style.display = 'none';
     panel.style.display = 'block';
+    messageDiv.style.color = '#16a34a';
     messageDiv.textContent = `Bem-vindo(a) ${session.user.email}`;
   }
 }
 checkSession();
+
+// Navegar entre seções
+function showSection(name) {
+  document.querySelectorAll('.side-menu button').forEach(btn => btn.classList.remove('active'));
+  const btn = Array.from(document.querySelectorAll('.side-menu button')).find(b => b.textContent===name);
+  if (btn) btn.classList.add('active');
+
+  document.getElementById('sectionContent').innerHTML = `<h2>${name}</h2><p>Conteúdo da seção ${name}.</p>`;
+}
+
+// Função de pesquisa (placeholder)
+function searchSite() {
+  const query = document.getElementById('siteSearch').value;
+  document.getElementById('sectionContent').innerHTML = `<h2>Pesquisar: ${query}</h2><p>Resultados da pesquisa.</p>`;
+}
 </script>
 </body>
 </html>
-
-
 
 
 
