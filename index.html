@@ -1,85 +1,48 @@
+<!-- Código completo do index.html -->
 <!doctype html>
 <html lang="pt-br">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Plataforma Revalida</title>
+<title>Plataforma Revalida - Painel de Estudos</title>
 <style>
-  body { font-family:sans-serif; background:#f0f4f8; margin:0; }
-
-  /* Login/Cadastro */
-  .login-card { background:#ffffff; padding:28px; border-radius:16px; width:360px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin:50px auto; }
-  h1 { margin-top:0; text-align:center; color:#1f2937; }
-  input { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; }
-  button { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; background:#6366f1; color:#fff; cursor:pointer; }
-  button:hover { background:#4f46e5; }
-  .switch { color:#4b5563; cursor:pointer; text-decoration:underline; text-align:center; margin-top:8px; }
-  .message { text-align:center; margin-top:8px; font-size:0.9rem; color:#ef4444; }
-  .hidden { display:none; }
-
-  /* Painel */
-  .panel { display:none; max-width:1200px; margin:20px auto; padding:0 20px; }
-  .panel-container { display:flex; min-height:80vh; gap:20px; }
-
-  /* Menu lateral profissional */
-  .side-menu {
-    width: 200px;
-    background: #1e40af; /* azul escuro */
-    border-radius: 16px;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  .side-menu button {
-    background: transparent;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 10px;
-    cursor: pointer;
-    text-align: left;
-    transition: background 0.3s;
-  }
-
-  .side-menu button:hover {
-    background: #3b82f6; /* azul médio */
-  }
-
-  .side-menu button.active {
-    background: #2563eb; /* azul claro */
-    font-weight: bold;
-  }
-
-  .side-menu button#logoutBtnSide {
-    margin-top: auto;
-    background: #ef4444; /* vermelho */
-    color: #fff;
-  }
-
-  /* Área de conteúdo */
-  .content-area { flex:1; display:flex; flex-direction:column; gap:12px; }
-
-  /* Barra de pesquisa no topo à direita */
-  .top-bar { display:flex; justify-content:flex-end; padding:10px 0; }
-  .top-bar input[type="text"] { width:200px; padding:6px; border-radius:6px; border:1px solid #ccc; }
-
-  #sectionContent { background:#fff; padding:20px; border-radius:16px; box-shadow:0 5px 15px rgba(0,0,0,0.1); flex:1; }
-
-  /* Responsividade */
-  @media (max-width:768px){
-    .panel-container { flex-direction:column; }
-    .side-menu { width:100%; flex-direction:row; overflow-x:auto; }
-    .side-menu button { flex:1; text-align:center; }
-    .top-bar { justify-content:flex-start; }
-    .top-bar input[type="text"] { width:100%; }
-  }
+/* Estilos já enviados permanecem iguais */
+body { font-family:sans-serif; background:#f0f4f8; margin:0; }
+.login-card { background:#ffffff; padding:28px; border-radius:16px; width:360px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin:50px auto; }
+h1 { margin-top:0; text-align:center; color:#1f2937; }
+input { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; }
+button { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; background:#6366f1; color:#fff; cursor:pointer; }
+button:hover { background:#4f46e5; }
+.switch { color:#4b5563; cursor:pointer; text-decoration:underline; text-align:center; margin-top:8px; }
+.message { text-align:center; margin-top:8px; font-size:0.9rem; color:#ef4444; }
+.hidden { display:none; }
+.panel { display:none; max-width:1200px; margin:20px auto; padding:0 20px; }
+.panel-container { display:flex; min-height:80vh; gap:20px; }
+.side-menu { width:220px; background:#1e40af; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:10px; }
+.side-menu button { background:transparent; color:#fff; border:none; border-radius:8px; padding:10px; cursor:pointer; text-align:left; transition: background 0.3s; }
+.side-menu button:hover { background:#3b82f6; }
+.side-menu button.active { background:#2563eb; font-weight:bold; }
+.side-menu button#logoutBtnSide { margin-top:auto; background:#ef4444; color:#fff; }
+.content-area { flex:1; display:flex; flex-direction:column; gap:12px; }
+.top-bar { display:flex; justify-content:flex-end; padding:10px 0; }
+.top-bar input[type="text"] { width:200px; padding:6px; border-radius:6px; border:1px solid #ccc; }
+.dashboard-cards { display:flex; gap:20px; flex-wrap:wrap; }
+.card { background:#fff; flex:1; min-width:220px; padding:16px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+.card h3 { margin-top:0; }
+.card p { margin:6px 0; color:#4b5563; font-size:0.9rem; }
+#sectionContent { background:#fff; padding:20px; border-radius:16px; box-shadow:0 5px 15px rgba(0,0,0,0.1); flex:1; }
+@media (max-width:768px){
+  .panel-container { flex-direction:column; }
+  .side-menu { width:100%; flex-direction:row; overflow-x:auto; }
+  .side-menu button { flex:1; text-align:center; }
+  .top-bar { justify-content:flex-start; }
+  .top-bar input[type="text"] { width:100%; }
+  .dashboard-cards { flex-direction:column; }
+}
 </style>
 </head>
 <body>
 
-<!-- Login/Cadastro -->
 <div class="login-card" id="loginCard">
   <h1 id="formTitle">Login</h1>
   <form id="authForm">
@@ -93,40 +56,31 @@
   <div class="message" id="message"></div>
 </div>
 
-<!-- Painel -->
 <div class="panel" id="panel">
   <div class="panel-container">
-    <!-- Menu lateral -->
     <div class="side-menu">
-      <button class="active" onclick="showSection('Página Inicial')">Página Inicial</button>
-      <button onclick="showSection('Perfil')">Perfil</button>
-      <button onclick="showSection('Material de Estudo')">Material de Estudo</button>
-      <button onclick="showSection('Cursos')">Cursos</button>
+      <button class="active" onclick="showSection('Dashboard')">Dashboard</button>
+      <button onclick="showSection('Vídeos')">Vídeos</button>
       <button onclick="showSection('Simulados')">Simulados</button>
+      <button onclick="showSection('Provas Antigas')">Provas Antigas</button>
       <button onclick="showSection('Flashcards')">Flashcards</button>
-      <button onclick="showSection('Biblioteca')">Biblioteca</button>
+      <button onclick="showSection('Perfil')">Perfil</button>
       <button onclick="showSection('Fale Conosco')">Fale Conosco</button>
       <button id="logoutBtnSide">Sair</button>
     </div>
-
-    <!-- Conteúdo -->
     <div class="content-area">
       <div class="top-bar">
         <input type="text" id="siteSearch" placeholder="Pesquisar..." oninput="searchSite()">
       </div>
-      <div id="sectionContent">
-        <h2>Página Inicial</h2>
-        <p>Bem-vindo ao seu painel de controle.</p>
-      </div>
+      <div id="sectionContent"></div>
     </div>
   </div>
 </div>
 
-<!-- Supabase SDK -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 <script>
 const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
+const SUPABASE_ANON_KEY = "YOUR_ANON_KEY_HERE"; 
 const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const authForm = document.getElementById('authForm');
@@ -143,8 +97,6 @@ const panel = document.getElementById('panel');
 const logoutBtnSide = document.getElementById('logoutBtnSide');
 
 let isLogin = true;
-
-// Alternar login/cadastro
 toggleForm.addEventListener('click', () => {
   isLogin = !isLogin;
   formTitle.textContent = isLogin ? 'Login' : 'Cadastro';
@@ -154,39 +106,33 @@ toggleForm.addEventListener('click', () => {
   messageDiv.textContent = '';
 });
 
-// Login/Cadastro
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = emailInput.value;
   const password = passwordInput.value;
   messageDiv.style.color = '#ef4444';
   messageDiv.textContent = "Aguarde...";
-
   try {
     if (isLogin) {
       const { data, error } = await client.auth.signInWithPassword({ email, password });
       if (error) throw error;
       if (!data.session) throw new Error("Usuário ou senha incorretos");
-
       messageDiv.style.color = '#16a34a';
       messageDiv.textContent = `Bem-vindo(a) ${email}!`;
       loginCard.style.display = 'none';
       panel.style.display = 'block';
+      showSection('Dashboard');
     } else {
       const name = nameInput.value.trim();
       const age = parseInt(ageInput.value);
       if (!name || !age) throw new Error("Preencha nome e idade corretamente.");
-
       const { data, error } = await client.auth.signUp({ email, password });
       if (error) throw error;
-      if (!data.user) throw new Error("Não foi possível criar usuário.");
-
       const userId = data.user.id;
       const { error: insertError } = await client.from('profiles').insert([{ id: userId, name, age }]);
       if (insertError) throw insertError;
-
       messageDiv.style.color = '#16a34a';
-      messageDiv.textContent = "Cadastro realizado com sucesso! Faça login.";
+      messageDiv.textContent = "Cadastro realizado! Faça login.";
       isLogin = true;
       formTitle.textContent = 'Login';
       submitBtn.textContent = 'Entrar';
@@ -194,29 +140,19 @@ authForm.addEventListener('submit', async (e) => {
       document.querySelectorAll('.extra').forEach(el => el.classList.add('hidden'));
       authForm.reset();
     }
-  } catch (err) {
-    messageDiv.style.color = '#ef4444';
-    messageDiv.textContent = "Erro: " + err.message;
-  }
+  } catch (err) { messageDiv.style.color = '#ef4444'; messageDiv.textContent = "Erro: " + err.message; }
 });
 
-// Logout
-async function logout() {
+logoutBtnSide.addEventListener('click', async () => {
   const { error } = await client.auth.signOut();
-  if (error) {
-    messageDiv.style.color = '#ef4444';
-    messageDiv.textContent = "Erro ao sair: " + error.message;
-    return;
-  }
+  if (error) { messageDiv.textContent = "Erro ao sair: " + error.message; return; }
   messageDiv.style.color = '#16a34a';
   messageDiv.textContent = "Saiu com sucesso!";
   authForm.reset();
   loginCard.style.display = 'block';
   panel.style.display = 'none';
-}
-logoutBtnSide.addEventListener('click', logout);
+});
 
-// Checar sessão
 async function checkSession() {
   const { data: { session } } = await client.auth.getSession();
   if (session) {
@@ -224,25 +160,43 @@ async function checkSession() {
     panel.style.display = 'block';
     messageDiv.style.color = '#16a34a';
     messageDiv.textContent = `Bem-vindo(a) ${session.user.email}`;
+    showSection('Dashboard');
   }
 }
 checkSession();
 
-// Navegar entre seções
 function showSection(name) {
   document.querySelectorAll('.side-menu button').forEach(btn => btn.classList.remove('active'));
   const btn = Array.from(document.querySelectorAll('.side-menu button')).find(b => b.textContent===name);
   if (btn) btn.classList.add('active');
-
-  document.getElementById('sectionContent').innerHTML = `<h2>${name}</h2><p>Conteúdo da seção ${name}.</p>`;
+  let content = '';
+  switch(name) {
+    case 'Dashboard':
+      content = `<h2>Dashboard</h2>
+      <div class="dashboard-cards">
+        <div class="card"><h3>Progresso Geral</h3><p>Você completou 35% dos cursos.</p></div>
+        <div class="card"><h3>Simulados Recentes</h3><p>Último simulado: Clínica Médica - 80% acertos</p></div>
+        <div class="card"><h3>Vídeos Assistidos</h3><p>15 aulas completadas de 40</p></div>
+        <div class="card"><h3>Notificações</h3><p>Novo vídeo de Pediatria disponível!</p></div>
+      </div>`; break;
+    case 'Vídeos': content = `<h2>Vídeos</h2><p>Lista de aulas e vídeos disponíveis...</p>`; break;
+    case 'Simulados': content = `<h2>Simulados</h2><p>Escolha um simulado para começar.</p>`; break;
+    case 'Provas Antigas': content = `<h2>Provas Antigas</h2><p>Faça download ou visualize provas antigas.</p>`; break;
+    case 'Flashcards': content = `<h2>Flashcards</h2><p>Crie e revise seus flashcards.</p>`; break;
+    case 'Perfil': content = `<h2>Perfil</h2><p>Informações do usuário e progresso.</p>`; break;
+    case 'Fale Conosco': content = `<h2>Fale Conosco</h2><p>Envie sua mensagem ou dúvida.</p>`; break;
+  }
+  document.getElementById('sectionContent').innerHTML = content;
 }
 
-// Função de pesquisa
 function searchSite() {
-  const query = document.getElementById('siteSearch').value;
-  document.getElementById('sectionContent').innerHTML = `<h2>Pesquisar: ${query}</h2><p>Resultados da pesquisa.</p>`;
+  const query = document.getElementById('siteSearch').value.toLowerCase();
+  const contentDiv = document.getElementById('sectionContent');
+  if(!query) { showSection(document.querySelector('.side-menu button.active').textContent); return; }
+  contentDiv.innerHTML = `<h2>Resultados para "${query}"</h2><p>Busca simulada (em desenvolvimento)...</p>`;
 }
 </script>
+
 </body>
 </html>
 
