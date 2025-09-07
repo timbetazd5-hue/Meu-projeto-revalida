@@ -4,69 +4,47 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Plataforma Revalida - Painel de Estudos</title>
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <style>
-/* Reset e tipografia */
-body { font-family: 'Inter', sans-serif; background:#f0f4f8; margin:0; color:#1f2937; }
-h1,h2,h3 { margin:0; }
-a { text-decoration:none; color:inherit; }
-
-/* Login Card */
-.login-card { background:#fff; padding:28px; border-radius:16px; width:360px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin:50px auto; }
-.login-card h1 { text-align:center; color:#1f2937; margin-bottom:20px; }
-.login-card input, .login-card button { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; }
-.login-card button { background:#6366f1; color:#fff; border:none; cursor:pointer; transition:0.3s; }
-.login-card button:hover { background:#4f46e5; }
+body { font-family:sans-serif; background:#f0f4f8; margin:0; }
+header { background:#1e40af; color:#fff; padding:14px 20px; font-size:1.2rem; font-weight:bold; }
+.login-card { background:#ffffff; padding:28px; border-radius:16px; width:360px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin:50px auto; }
+h1 { margin-top:0; text-align:center; color:#1f2937; }
+input, select { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; }
+button { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; background:#6366f1; color:#fff; cursor:pointer; }
+button:hover { background:#4f46e5; }
 .switch { color:#4b5563; cursor:pointer; text-decoration:underline; text-align:center; margin-top:8px; }
 .message { text-align:center; margin-top:8px; font-size:0.9rem; color:#ef4444; }
 .hidden { display:none; }
-
-/* Painel Principal */
-.panel { display:none; max-width:1200px; margin:20px auto; padding:0 20px; }
+.panel { display:none; max-width:1200px; margin:0 auto; padding:0 20px; }
 .panel-container { display:flex; min-height:80vh; gap:20px; }
-
-/* Menu Lateral */
 .side-menu { width:220px; background:#1e40af; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:10px; }
-.side-menu button { display:flex; align-items:center; gap:10px; background:transparent; color:#fff; border:none; border-radius:8px; padding:10px; cursor:pointer; text-align:left; transition: background 0.3s; font-weight:500; }
-.side-menu button i { width:20px; text-align:center; }
+.side-menu button { background:transparent; color:#fff; border:none; border-radius:8px; padding:10px; cursor:pointer; text-align:left; transition: background 0.3s; }
 .side-menu button:hover { background:#3b82f6; }
 .side-menu button.active { background:#2563eb; font-weight:bold; }
 .side-menu button#logoutBtnSide { margin-top:auto; background:#ef4444; color:#fff; }
-
-/* Header Topo */
-header { display:flex; justify-content:space-between; align-items:center; padding:12px 24px; background:#1e40af; color:#fff; border-radius:16px 16px 0 0; box-shadow:0 4px 10px rgba(0,0,0,0.1); margin-bottom:12px; }
-header .title { font-size:1.5rem; font-weight:700; }
-header .top-bar input[type="text"] { width:200px; padding:6px; border-radius:6px; border:1px solid #ccc; }
-
-/* Área de Conteúdo */
 .content-area { flex:1; display:flex; flex-direction:column; gap:12px; }
+.top-bar { display:flex; justify-content:flex-end; padding:10px 0; }
+.top-bar input[type="text"] { width:200px; padding:6px; border-radius:6px; border:1px solid #ccc; }
 .dashboard-cards { display:flex; gap:20px; flex-wrap:wrap; }
-
-/* Cards Dashboard */
-.card { background:#fff; flex:1; min-width:220px; padding:16px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); transition:0.3s; }
-.card:hover { transform:translateY(-5px); box-shadow:0 10px 25px rgba(0,0,0,0.15); }
-.card h3 { margin-bottom:8px; }
+.card { background:#fff; flex:1; min-width:220px; padding:16px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); }
+.card h3 { margin-top:0; }
 .card p { margin:6px 0; color:#4b5563; font-size:0.9rem; }
-.progress-bar { background:#e5e7eb; border-radius:8px; overflow:hidden; height:10px; margin-top:6px; }
-.progress-fill { height:100%; background:#6366f1; width:0%; transition:width 1s; }
-
-/* Seções de Conteúdo */
 #sectionContent { background:#fff; padding:20px; border-radius:16px; box-shadow:0 5px 15px rgba(0,0,0,0.1); flex:1; }
-
-/* Responsividade */
+.question { margin-bottom:15px; padding:12px; border-bottom:1px solid #e5e7eb; }
 @media (max-width:768px){
   .panel-container { flex-direction:column; }
   .side-menu { width:100%; flex-direction:row; overflow-x:auto; }
-  .side-menu button { flex:1; justify-content:center; text-align:center; }
-  header { flex-direction:column; align-items:flex-start; gap:8px; }
-  header .top-bar input[type="text"] { width:100%; }
+  .side-menu button { flex:1; text-align:center; }
+  .top-bar { justify-content:flex-start; }
+  .top-bar input[type="text"] { width:100%; }
   .dashboard-cards { flex-direction:column; }
 }
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<header>Revalida Medicina</header>
+
 <div class="login-card" id="loginCard">
   <h1 id="formTitle">Login</h1>
   <form id="authForm">
@@ -80,30 +58,24 @@ header .top-bar input[type="text"] { width:200px; padding:6px; border-radius:6px
   <div class="message" id="message"></div>
 </div>
 
-<!-- PAINEL -->
 <div class="panel" id="panel">
   <div class="panel-container">
-    <nav class="side-menu">
-      <button class="active" onclick="showSection('Dashboard')"><i class="fas fa-tachometer-alt"></i>Dashboard</button>
-      <button onclick="showSection('Vídeos')"><i class="fas fa-video"></i>Vídeos</button>
-      <button onclick="showSection('Simulados')"><i class="fas fa-file-alt"></i>Simulados</button>
-      <button onclick="showSection('Provas Antigas')"><i class="fas fa-book"></i>Provas Antigas</button>
-      <button onclick="showSection('Flashcards')"><i class="fas fa-clone"></i>Flashcards</button>
-      <button onclick="showSection('Perfil')"><i class="fas fa-user"></i>Perfil</button>
-      <button onclick="showSection('Fale Conosco')"><i class="fas fa-envelope"></i>Fale Conosco</button>
-      <button id="logoutBtnSide"><i class="fas fa-sign-out-alt"></i>Sair</button>
-    </nav>
-    <main class="content-area">
-      <!-- Header Topo -->
-      <header>
-        <div class="title">Revalida Medicina</div>
-        <div class="top-bar">
-          <input type="text" id="siteSearch" placeholder="Pesquisar..." oninput="searchSite()">
-        </div>
-      </header>
-
+    <div class="side-menu">
+      <button class="active" onclick="showSection('Dashboard')">Dashboard</button>
+      <button onclick="showSection('Vídeos')">Vídeos</button>
+      <button onclick="showSection('Simulados')">Simulados</button>
+      <button onclick="showSection('Provas Antigas')">Provas Antigas</button>
+      <button onclick="showSection('Flashcards')">Flashcards</button>
+      <button onclick="showSection('Perfil')">Perfil</button>
+      <button onclick="showSection('Fale Conosco')">Fale Conosco</button>
+      <button id="logoutBtnSide">Sair</button>
+    </div>
+    <div class="content-area">
+      <div class="top-bar">
+        <input type="text" id="siteSearch" placeholder="Pesquisar..." oninput="searchSite()">
+      </div>
       <div id="sectionContent"></div>
-    </main>
+    </div>
   </div>
 </div>
 
@@ -127,8 +99,6 @@ const panel = document.getElementById('panel');
 const logoutBtnSide = document.getElementById('logoutBtnSide');
 
 let isLogin = true;
-
-// Alternar login/cadastro
 toggleForm.addEventListener('click', () => {
   isLogin = !isLogin;
   formTitle.textContent = isLogin ? 'Login' : 'Cadastro';
@@ -138,52 +108,33 @@ toggleForm.addEventListener('click', () => {
   messageDiv.textContent = '';
 });
 
-// Login/Cadastro robusto
 authForm.addEventListener('submit', async (e) => {
   e.preventDefault();
-  
-  const email = emailInput.value.trim();
-  const password = passwordInput.value.trim();
-  
+  const email = emailInput.value;
+  const password = passwordInput.value;
   messageDiv.style.color = '#ef4444';
   messageDiv.textContent = "Aguarde...";
-
-  if (!email || !password) {
-    messageDiv.textContent = "Preencha email e senha corretamente.";
-    return;
-  }
-
   try {
     if (isLogin) {
       const { data, error } = await client.auth.signInWithPassword({ email, password });
-      if (error) throw new Error(error.message);
-      if (!data.session) throw new Error("Email ou senha incorretos.");
-
+      if (error) throw error;
+      if (!data.session) throw new Error("Usuário ou senha incorretos");
       messageDiv.style.color = '#16a34a';
       messageDiv.textContent = `Bem-vindo(a) ${email}!`;
       loginCard.style.display = 'none';
       panel.style.display = 'block';
       showSection('Dashboard');
-
     } else {
       const name = nameInput.value.trim();
       const age = parseInt(ageInput.value);
-
-      if (!name || !age || !email || !password) {
-        messageDiv.textContent = "Preencha todos os campos corretamente.";
-        return;
-      }
-
+      if (!name || !age) throw new Error("Preencha nome e idade corretamente.");
       const { data, error } = await client.auth.signUp({ email, password });
-      if (error) throw new Error(error.message);
-
+      if (error) throw error;
       const userId = data.user.id;
       const { error: insertError } = await client.from('profiles').insert([{ id: userId, name, age }]);
-      if (insertError) throw new Error(insertError.message);
-
+      if (insertError) throw insertError;
       messageDiv.style.color = '#16a34a';
-      messageDiv.textContent = "Cadastro realizado com sucesso! Faça login.";
-
+      messageDiv.textContent = "Cadastro realizado! Faça login.";
       isLogin = true;
       formTitle.textContent = 'Login';
       submitBtn.textContent = 'Entrar';
@@ -191,14 +142,9 @@ authForm.addEventListener('submit', async (e) => {
       document.querySelectorAll('.extra').forEach(el => el.classList.add('hidden'));
       authForm.reset();
     }
-
-  } catch (err) {
-    messageDiv.style.color = '#ef4444';
-    messageDiv.textContent = `Erro: ${err.message}`;
-  }
+  } catch (err) { messageDiv.style.color = '#ef4444'; messageDiv.textContent = "Erro: " + err.message; }
 });
 
-// Logout
 logoutBtnSide.addEventListener('click', async () => {
   const { error } = await client.auth.signOut();
   if (error) { messageDiv.textContent = "Erro ao sair: " + error.message; return; }
@@ -209,7 +155,6 @@ logoutBtnSide.addEventListener('click', async () => {
   panel.style.display = 'none';
 });
 
-// Verificar sessão
 async function checkSession() {
   const { data: { session } } = await client.auth.getSession();
   if (session) {
@@ -222,26 +167,45 @@ async function checkSession() {
 }
 checkSession();
 
-// Alternar seções
 function showSection(name) {
   document.querySelectorAll('.side-menu button').forEach(btn => btn.classList.remove('active'));
   const btn = Array.from(document.querySelectorAll('.side-menu button')).find(b => b.textContent===name);
   if (btn) btn.classList.add('active');
-
   let content = '';
   switch(name) {
     case 'Dashboard':
       content = `<h2>Dashboard</h2>
       <div class="dashboard-cards">
-        <div class="card"><h3>Progresso Geral</h3><p>35% concluído</p>
-          <div class="progress-bar"><div class="progress-fill" style="width:35%;"></div></div>
-        </div>
+        <div class="card"><h3>Progresso Geral</h3><p>Você completou 35% dos cursos.</p></div>
         <div class="card"><h3>Simulados Recentes</h3><p>Último simulado: Clínica Médica - 80% acertos</p></div>
         <div class="card"><h3>Vídeos Assistidos</h3><p>15 aulas completadas de 40</p></div>
         <div class="card"><h3>Notificações</h3><p>Novo vídeo de Pediatria disponível!</p></div>
       </div>`; break;
     case 'Vídeos': content = `<h2>Vídeos</h2><p>Lista de aulas e vídeos disponíveis...</p>`; break;
-    case 'Simulados': content = `<h2>Simulados</h2><p>Escolha um simulado para começar.</p>`; break;
+    case 'Simulados': 
+      content = `
+      <h2>Gerar Simulado</h2>
+      <label for="numQuestions">Número de questões:</label>
+      <input type="number" id="numQuestions" min="5" max="100" value="10">
+
+      <label for="area">Área da Medicina:</label>
+      <select id="area">
+        <option value="all">Mesclar todas</option>
+        <option value="Pediatria">Pediatria</option>
+        <option value="Ginecologia e Obstetrícia">Ginecologia e Obstetrícia</option>
+        <option value="Clínica Médica">Clínica Médica</option>
+        <option value="Cirurgia">Cirurgia</option>
+        <option value="Preventiva">Preventiva</option>
+      </select>
+
+      <button onclick="startSimulado()">Iniciar</button>
+
+      <div id="simuladoArea" class="hidden">
+        <h3>Questões</h3>
+        <form id="simuladoForm"></form>
+        <button type="button" onclick="finishSimulado()">Finalizar</button>
+      </div>
+      `; break;
     case 'Provas Antigas': content = `<h2>Provas Antigas</h2><p>Faça download ou visualize provas antigas.</p>`; break;
     case 'Flashcards': content = `<h2>Flashcards</h2><p>Crie e revise seus flashcards.</p>`; break;
     case 'Perfil': content = `<h2>Perfil</h2><p>Informações do usuário e progresso.</p>`; break;
@@ -250,12 +214,65 @@ function showSection(name) {
   document.getElementById('sectionContent').innerHTML = content;
 }
 
-// Busca simulada
 function searchSite() {
   const query = document.getElementById('siteSearch').value.toLowerCase();
   const contentDiv = document.getElementById('sectionContent');
   if(!query) { showSection(document.querySelector('.side-menu button.active').textContent); return; }
   contentDiv.innerHTML = `<h2>Resultados para "${query}"</h2><p>Busca simulada (em desenvolvimento)...</p>`;
+}
+
+// ---- Lógica do Simulado ----
+async function startSimulado() {
+  const num = parseInt(document.getElementById("numQuestions").value);
+  const area = document.getElementById("area").value;
+
+  let query = client.from("questions").select("*");
+  if (area !== "all") {
+    query = query.eq("area", area);
+  }
+
+  const { data, error } = await query;
+  if (error) {
+    alert("Erro ao carregar questões: " + error.message);
+    return;
+  }
+
+  if (!data || data.length === 0) {
+    alert("Nenhuma questão encontrada para essa área.");
+    return;
+  }
+
+  const shuffled = data.sort(() => 0.5 - Math.random());
+  const selected = shuffled.slice(0, num);
+
+  const form = document.getElementById("simuladoForm");
+  form.innerHTML = "";
+  selected.forEach((q, i) => {
+    form.innerHTML += `
+      <div class="question">
+        <p><b>${i+1}.</b> ${q.question_text}</p>
+        <label><input type="radio" name="q${q.id}" value="A"> ${q.option_a}</label><br>
+        <label><input type="radio" name="q${q.id}" value="B"> ${q.option_b}</label><br>
+        <label><input type="radio" name="q${q.id}" value="C"> ${q.option_c}</label><br>
+        <label><input type="radio" name="q${q.id}" value="D"> ${q.option_d}</label><br>
+      </div>
+    `;
+  });
+
+  document.getElementById("simuladoArea").classList.remove("hidden");
+  window.simuladoQuestoes = selected;
+}
+
+function finishSimulado() {
+  let acertos = 0;
+  window.simuladoQuestoes.forEach(q => {
+    const resposta = document.querySelector(`input[name="q${q.id}"]:checked`);
+    if (resposta && resposta.value === q.correct_option) {
+      acertos++;
+    }
+  });
+
+  alert(`Você acertou ${acertos} de ${window.simuladoQuestoes.length} questões!`);
 }
 </script>
 
