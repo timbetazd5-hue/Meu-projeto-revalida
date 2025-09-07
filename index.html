@@ -187,14 +187,14 @@ function showSection(name){
     case 'Simulados':
       content = `<h2>Simulado</h2>
       <label>Área: 
-        <select id="simArea">
-          <option value="Todas">Todas</option>
-          <option value="Pediatria">Pediatria</option>
-          <option value="Ginecologia">Ginecologia e Obstetrícia</option>
-          <option value="Clínica Médica">Clínica Médica</option>
-          <option value="Cirurgia">Cirurgia</option>
-          <option value="Preventiva">Preventiva</option>
-        </select>
+        <select id="areaSelect">
+  		<option value="">Todas as áreas</option>
+  		<option value="Pediatria">Pediatria</option>
+  		<option value="Ginecologia e Obstetricia">Ginecologia e Obstetricia</option>
+  		<option value="Clinica Medica">Clinica Medica</option>
+  		<option value="Cirurgia">Cirurgia</option>
+  		<option value="Preventiva">Preventiva</option>
+	</select>
       </label>
       <label>Número de questões:
         <input type="number" id="numQuestions" value="10" min="1" max="50">
