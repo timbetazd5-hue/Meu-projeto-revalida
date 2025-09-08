@@ -1,276 +1,77 @@
-<!doctype html>
-<html lang="pt-br">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Revalida Medicina - Painel de Estudos</title>
-<style>
-body { font-family:sans-serif; background:#f0f4f8; margin:0; }
-header { background:#1e40af; color:#fff; padding:12px 20px; font-size:1.2rem; font-weight:bold; border-radius:12px 12px 0 0; margin-bottom:20px; }
-.login-card { background:#fff; padding:28px; border-radius:16px; width:360px; box-shadow:0 10px 30px rgba(0,0,0,0.1); margin:50px auto; }
-h1 { margin-top:0; text-align:center; color:#1f2937; }
-input, select { width:100%; padding:10px; margin:6px 0; border-radius:8px; border:1px solid #ccc; }
-button { width:100%; padding:12px; margin:8px 0; border-radius:8px; border:none; background:#6366f1; color:#fff; cursor:pointer; }
-button:hover { background:#4f46e5; }
-.switch { color:#4b5563; cursor:pointer; text-decoration:underline; text-align:center; margin-top:8px; }
-.message { text-align:center; margin-top:8px; font-size:0.9rem; color:#ef4444; }
-.hidden { display:none; }
-.panel { display:none; max-width:1200px; margin:20px auto; padding:0 20px; }
-.panel-container { display:flex; min-height:80vh; gap:20px; }
-.side-menu { width:220px; background:#1e40af; border-radius:16px; padding:20px; display:flex; flex-direction:column; gap:10px; }
-.side-menu button { background:transparent; color:#fff; border:none; border-radius:8px; padding:10px; cursor:pointer; text-align:left; transition: background 0.3s; }
-.side-menu button:hover { background:#3b82f6; }
-.side-menu button.active { background:#2563eb; font-weight:bold; }
-.side-menu button#logoutBtnSide { margin-top:auto; background:#ef4444; color:#fff; }
-.content-area { flex:1; display:flex; flex-direction:column; gap:12px; }
-.top-bar { display:flex; justify-content:flex-end; padding:10px 0; }
-.top-bar input[type="text"] { width:200px; padding:6px; border-radius:6px; border:1px solid #ccc; }
-.dashboard-cards { display:flex; gap:20px; flex-wrap:wrap; }
-.card { background:#fff; flex:1; min-width:220px; padding:16px; border-radius:12px; box-shadow:0 5px 15px rgba(0,0,0,0.1); margin-bottom:16px; }
-.card h3 { margin-top:0; }
-.card p { margin:6px 0; color:#4b5563; font-size:0.9rem; }
-#sectionContent { background:#fff; padding:20px; border-radius:16px; box-shadow:0 5px 15px rgba(0,0,0,0.1); flex:1; }
-@media (max-width:768px){
-  .panel-container { flex-direction:column; }
-  .side-menu { width:100%; flex-direction:row; overflow-x:auto; }
-  .side-menu button { flex:1; text-align:center; }
-  .top-bar { justify-content:flex-start; }
-  .top-bar input[type="text"] { width:100%; }
-  .dashboard-cards { flex-direction:column; }
-}
-</style>
+  <meta charset="UTF-8">
+  <title>Simulado de Medicina</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .question { margin-bottom: 20px; padding: 10px; border: 1px solid #ccc; border-radius: 8px; }
+    select, button { margin: 10px 0; padding: 8px; }
+    .no-questions { color: red; font-weight: bold; }
+  </style>
 </head>
 <body>
+  <h1>Simulado de Medicina</h1>
 
-<header>Revalida Medicina</header>
+  <label for="areaSelect">Selecione a área:</label>
+  <select id="areaSelect">
+    <option value="Pediatria">Pediatria</option>
+    <option value="Cirurgia">Cirurgia</option>
+    <option value="Clínica Médica">Clínica Médica</option>
+    <option value="Preventiva">Preventiva</option>
+    <option value="Ginecologia e Obstetrícia">Ginecologia e Obstetrícia</option>
+  </select>
+  <button onclick="carregarQuestoes()">Carregar Questões</button>
 
-<div class="login-card" id="loginCard">
-  <h1 id="formTitle">Login</h1>
-  <form id="authForm">
-    <input type="text" id="name" placeholder="Nome completo" class="extra hidden">
-    <input type="number" id="age" placeholder="Idade" class="extra hidden">
-    <input type="email" id="email" placeholder="E-mail" required>
-    <input type="password" id="password" placeholder="Senha" required minlength="6">
-    <button type="submit" id="submitBtn">Entrar</button>
-  </form>
-  <div class="switch" id="toggleForm">Não tem conta? Cadastre-se</div>
-  <div class="message" id="message"></div>
-</div>
+  <div id="questionsContainer"></div>
 
-<div class="panel" id="panel">
-  <div class="panel-container">
-    <div class="side-menu">
-      <button class="active" onclick="showSection('Dashboard')">Dashboard</button>
-      <button onclick="showSection('Vídeos')">Vídeos</button>
-      <button onclick="showSection('Simulados')">Simulados</button>
-      <button onclick="showSection('Provas Antigas')">Provas Antigas</button>
-      <button onclick="showSection('Flashcards')">Flashcards</button>
-      <button onclick="showSection('Perfil')">Perfil</button>
-      <button onclick="showSection('Fale Conosco')">Fale Conosco</button>
-      <button id="logoutBtnSide">Sair</button>
-    </div>
-    <div class="content-area">
-      <div class="top-bar">
-        <input type="text" id="siteSearch" placeholder="Pesquisar..." oninput="searchSite()">
-      </div>
-      <div id="sectionContent"></div>
-    </div>
-  </div>
-</div>
+  <script>
+    let questions = [];
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-<script>
-const SUPABASE_URL = "https://hucepjpeuffnpjwiygwd.supabase.co";
-const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imh1Y2VwanBldWZmbnBqd2l5Z3dkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTcwNDM0OTcsImV4cCI6MjA3MjYxOTQ5N30.oIB39VeHfYGcx6aeUjSiLKz9Q8RbJ9-of8RZ_S2tju0";
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    async function carregarQuestoes() {
+      const areaSelecionada = document.getElementById("areaSelect").value;
+      const response = await fetch("questions.csv");
+      const data = await response.text();
+      const linhas = data.split("\n").slice(1);
 
-const authForm = document.getElementById('authForm');
-const nameInput = document.getElementById('name');
-const ageInput = document.getElementById('age');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const submitBtn = document.getElementById('submitBtn');
-const toggleForm = document.getElementById('toggleForm');
-const formTitle = document.getElementById('formTitle');
-const messageDiv = document.getElementById('message');
-const loginCard = document.getElementById('loginCard');
-const panel = document.getElementById('panel');
-const logoutBtnSide = document.getElementById('logoutBtnSide');
+      questions = linhas.map(linha => {
+        const cols = linha.split(",");
+        return {
+          question: cols[0],
+          options: JSON.parse(cols[1].replace(/""/g,'"')),
+          answer: cols[2],
+          comment: cols[3],
+          area: cols[4],
+          banca: cols[5]
+        };
+      }).filter(q => q.area === areaSelecionada);
 
-let isLogin = true;
-toggleForm.addEventListener('click', () => {
-  isLogin = !isLogin;
-  formTitle.textContent = isLogin ? 'Login' : 'Cadastro';
-  submitBtn.textContent = isLogin ? 'Entrar' : 'Cadastrar';
-  toggleForm.textContent = isLogin ? 'Não tem conta? Cadastre-se' : 'Já tem conta? Faça login';
-  document.querySelectorAll('.extra').forEach(el => el.classList.toggle('hidden', isLogin));
-  messageDiv.textContent = '';
-});
-
-authForm.addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const email = emailInput.value;
-  const password = passwordInput.value;
-  messageDiv.style.color = '#ef4444';
-  messageDiv.textContent = "Aguarde...";
-  try {
-    if(isLogin){
-      const { data, error } = await client.auth.signInWithPassword({ email, password });
-      if(error) throw error;
-      if(!data.session) throw new Error("Usuário ou senha incorretos");
-      messageDiv.style.color = '#16a34a';
-      messageDiv.textContent = `Bem-vindo(a) ${email}!`;
-      loginCard.style.display = 'none';
-      panel.style.display = 'block';
-      showSection('Dashboard');
-    } else {
-      const name = nameInput.value.trim();
-      const age = parseInt(ageInput.value);
-      if(!name || !age) throw new Error("Preencha nome e idade corretamente.");
-      const { data, error } = await client.auth.signUp({ email, password });
-      if(error) throw error;
-      const userId = data.user.id;
-      const { error: insertError } = await client.from('profiles').insert([{ id: userId, name, age }]);
-      if(insertError) throw insertError;
-      messageDiv.style.color = '#16a34a';
-      messageDiv.textContent = "Cadastro realizado! Faça login.";
-      isLogin = true;
-      formTitle.textContent = 'Login';
-      submitBtn.textContent = 'Entrar';
-      toggleForm.textContent = 'Não tem conta? Cadastre-se';
-      document.querySelectorAll('.extra').forEach(el => el.classList.add('hidden'));
-      authForm.reset();
+      mostrarQuestoes();
     }
-  } catch(err){ messageDiv.style.color = '#ef4444'; messageDiv.textContent = "Erro: "+err.message; }
-});
 
-logoutBtnSide.addEventListener('click', async () => {
-  const { error } = await client.auth.signOut();
-  if(error){ messageDiv.textContent = "Erro ao sair: "+error.message; return; }
-  messageDiv.style.color = '#16a34a';
-  messageDiv.textContent = "Saiu com sucesso!";
-  authForm.reset();
-  loginCard.style.display = 'block';
-  panel.style.display = 'none';
-});
+    function mostrarQuestoes() {
+      const container = document.getElementById("questionsContainer");
+      container.innerHTML = "";
 
-async function checkSession(){
-  const { data:{ session } } = await client.auth.getSession();
-  if(session){
-    loginCard.style.display = 'none';
-    panel.style.display = 'block';
-    messageDiv.style.color = '#16a34a';
-    messageDiv.textContent = `Bem-vindo(a) ${session.user.email}`;
-    showSection('Dashboard');
-  }
-}
-checkSession();
+      if (questions.length === 0) {
+        container.innerHTML = "<p class='no-questions'>Nenhuma questão encontrada para essa área.</p>";
+        return;
+      }
 
-function showSection(name){
-  document.querySelectorAll('.side-menu button').forEach(btn => btn.classList.remove('active'));
-  const btn = Array.from(document.querySelectorAll('.side-menu button')).find(b => b.textContent===name);
-  if(btn) btn.classList.add('active');
-
-  let content = '';
-  switch(name){
-    case 'Dashboard':
-      content = `<h2>Dashboard</h2>
-      <div class="dashboard-cards">
-        <div class="card"><h3>Progresso Geral</h3><p>Você completou 35% dos cursos.</p></div>
-        <div class="card"><h3>Simulados Recentes</h3><p>Último simulado: Clínica Médica - 80% acertos</p></div>
-        <div class="card"><h3>Vídeos Assistidos</h3><p>15 aulas completadas de 40</p></div>
-        <div class="card"><h3>Notificações</h3><p>Novo vídeo de Pediatria disponível!</p></div>
-      </div>`; break;
-
-    case 'Vídeos': content = `<h2>Vídeos</h2><p>Lista de aulas e vídeos disponíveis...</p>`; break;
-
-    case 'Simulados':
-      content = `<h2>Simulado</h2>
-      <label>Área: 
-        <select id="areaSelect">
-          <option value="">Todas as áreas</option>
-          <option value="Pediatria">Pediatria</option>
-          <option value="Ginecologia e Obstetrícia">Ginecologia e Obstetrícia</option>
-          <option value="Clínica Médica">Clínica Médica</option>
-          <option value="Cirurgia">Cirurgia</option>
-          <option value="Preventiva">Preventiva</option>
-        </select>
-      </label>
-      <label>Número de questões:
-        <input type="number" id="numQuestions" value="10" min="1" max="50">
-      </label>
-      <button onclick="generateSimulado()">Gerar Simulado</button>
-      <div id="simuladoContent"></div>`;
-      break;
-
-    case 'Provas Antigas': content = `<h2>Provas Antigas</h2><p>Faça download ou visualize provas antigas.</p>`; break;
-    case 'Flashcards': content = `<h2>Flashcards</h2><p>Crie e revise seus flashcards.</p>`; break;
-    case 'Perfil': content = `<h2>Perfil</h2><p>Informações do usuário e progresso.</p>`; break;
-    case 'Fale Conosco': content = `<h2>Fale Conosco</h2><p>Envie sua mensagem ou dúvida.</p>`; break;
-  }
-  document.getElementById('sectionContent').innerHTML = content;
-}
-
-function searchSite(){
-  const query = document.getElementById('siteSearch').value.toLowerCase();
-  const contentDiv = document.getElementById('sectionContent');
-  if(!query){ showSection(document.querySelector('.side-menu button.active').textContent); return; }
-  contentDiv.innerHTML = `<h2>Resultados para "${query}"</h2><p>Busca simulada (em desenvolvimento)...</p>`;
-}
-
-async function generateSimulado(){
-  const area = document.getElementById('areaSelect').value; // corrigido!
-  const num = parseInt(document.getElementById('numQuestions').value);
-  let query = client.from('questions').select('*');
-  
-  if(area && area !=="") { query = query.eq('area', area); }
-
-  const { data: questions, error } = await query;
-  if(error){ alert('Erro ao carregar questões: '+error.message); return; }
-  if(!questions || questions.length === 0){ 
-    document.getElementById('simuladoContent').innerHTML = "<p>Nenhuma questão encontrada para essa área.</p>";
-    return;
-  }
-
-  const shuffled = questions.sort(() => 0.5 - Math.random()).slice(0,num);
-
-  const simDiv = document.getElementById('simuladoContent');
-  simDiv.innerHTML = '';
-  shuffled.forEach((q,index)=>{
-    const options = JSON.parse(q.options);
-    let html = `<div class="card" id="qcard${index}">
-        <p><b>Q${index+1}:</b> ${q.question}</p>`;
-    options.forEach((opt,i)=>{
-      const letter = String.fromCharCode(65+i);
-      html += `<div><input type="radio" name="q${index}" value="${letter}"> ${letter}) ${opt}</div>`;
-    });
-    html += `<p><i>Comentário: ${q.comment}</i></p>`;
-    html += `<button onclick="addAIComment(${index})">Gerar comentário da IA</button>`;
-    html += `<div>
-               <label>Seu comentário:</label>
-               <input type="text" id="userComment${index}" placeholder="Deixe seu comentário...">
-               <button onclick="saveUserComment(${index})">Salvar</button>
-             </div>`;
-    html += `<div id="aiComment${index}" style="margin-top:8px; color:#2563eb;"></div>`;
-    html += `</div>`;
-    simDiv.innerHTML += html;
-  });
-}
-
-function addAIComment(index){
-  const aiExplanation = "Esta questão é importante porque aborda o conceito X, que é fundamental na prática clínica.";
-  document.getElementById(`aiComment${index}`).innerText = "Comentário da IA: " + aiExplanation;
-}
-
-function saveUserComment(index){
-  const comment = document.getElementById(`userComment${index}`).value;
-  if(comment.trim()===""){ alert("Digite um comentário antes de salvar!"); return; }
-  const commentDiv = document.createElement("p");
-  commentDiv.style.color = "#16a34a";
-  commentDiv.innerText = "Seu comentário: " + comment;
-  document.getElementById(`qcard${index}`).appendChild(commentDiv);
-  document.getElementById(`userComment${index}`).value = "";
-}
-</script>
+      questions.forEach((q, index) => {
+        const div = document.createElement("div");
+        div.className = "question";
+        div.innerHTML = `
+          <p><strong>${index + 1}. ${q.question}</strong></p>
+          <ul>
+            ${q.options.map(op => `<li>${op}</li>`).join("")}
+          </ul>
+          <p><em>Resposta correta:</em> ${q.answer}</p>
+          <p><em>Comentário:</em> ${q.comment}</p>
+        `;
+        container.appendChild(div);
+      });
+    }
+  </script>
 </body>
 </html>
