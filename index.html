@@ -188,13 +188,13 @@ function showSection(name){
       content = `<h2>Simulado</h2>
       <label>Área: 
         <select id="areaSelect">
-  		<option value="">Todas as áreas</option>
-  		<option value="Pediatria">Pediatria</option>
-  		<option value="Ginecologia e Obstetrícia">Ginecologia e Obstetrícia</option>
-  		<option value="Clínica Médica">Clínica Médica</option>
-  		<option value="Cirurgia">Cirurgia</option>
-  		<option value="Preventiva">Preventiva</option>
-	</select>
+          <option value="">Todas as áreas</option>
+          <option value="Pediatria">Pediatria</option>
+          <option value="Ginecologia e Obstetrícia">Ginecologia e Obstetrícia</option>
+          <option value="Clínica Médica">Clínica Médica</option>
+          <option value="Cirurgia">Cirurgia</option>
+          <option value="Preventiva">Preventiva</option>
+        </select>
       </label>
       <label>Número de questões:
         <input type="number" id="numQuestions" value="10" min="1" max="50">
@@ -219,7 +219,7 @@ function searchSite(){
 }
 
 async function generateSimulado(){
-  const area = document.getElementById('simArea').value;
+  const area = document.getElementById('areaSelect').value; // corrigido!
   const num = parseInt(document.getElementById('numQuestions').value);
   let query = client.from('questions').select('*');
   
@@ -227,6 +227,10 @@ async function generateSimulado(){
 
   const { data: questions, error } = await query;
   if(error){ alert('Erro ao carregar questões: '+error.message); return; }
+  if(!questions || questions.length === 0){ 
+    document.getElementById('simuladoContent').innerHTML = "<p>Nenhuma questão encontrada para essa área.</p>";
+    return;
+  }
 
   const shuffled = questions.sort(() => 0.5 - Math.random()).slice(0,num);
 
@@ -270,4 +274,3 @@ function saveUserComment(index){
 </script>
 </body>
 </html>
-
