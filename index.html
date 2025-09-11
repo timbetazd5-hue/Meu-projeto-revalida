@@ -188,7 +188,6 @@ function showSection(name){
       content = `<h2>Simulado</h2>
       <label>Área: 
         <select id="areaSelect">
-          <option value="">Todas as áreas</option>
           <option value="Pediatria">Pediatria</option>
           <option value="Ginecologia e Obstetrícia">Ginecologia e Obstetrícia</option>
           <option value="Clínica Médica">Clínica Médica</option>
@@ -219,11 +218,11 @@ function searchSite(){
 }
 
 async function generateSimulado(){
-  const area = document.getElementById('areaSelect').value; // corrigido!
+  const area = document.getElementById('areaSelect').value;
   const num = parseInt(document.getElementById('numQuestions').value);
   let query = client.from('questions').select('*');
   
-  if(area && area !=="") { query = query.eq('area', area); }
+  if(area) { query = query.eq('area', area); }
 
   const { data: questions, error } = await query;
   if(error){ alert('Erro ao carregar questões: '+error.message); return; }
